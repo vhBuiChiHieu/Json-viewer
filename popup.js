@@ -11,12 +11,17 @@ document.addEventListener('DOMContentLoaded', function() {
     const historyList = document.getElementById('history-list');
     const editorContainer = document.querySelector('.editor-container');
     const content = document.querySelector('.content');
+    const themeOptions = document.querySelectorAll('.theme-option');
     
-    // Variable to keep track of the current mode
+    // Variables to keep track of the current mode and theme
     let isRawMode = true; // Mặc định ở chế độ Raw khi mới mở extension
+    let currentTheme = 'default'; // Mặc định theme là Default
     
     // Load lịch sử JSON đã nhập
     loadJsonHistory();
+    
+    // Load theme đã lưu
+    loadSavedTheme();
     
     // Kiểm tra xem có mở popup từ context menu không
     checkForContextMenuText();
@@ -112,7 +117,7 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }
     
-    // Hàm định dạng JSON theo mẫu của người dùng
+    // Hàm định dạng JSON theo mẫu của người dùng và theme hiện tại
     function formatJsonLikeExample(obj) {
         // Chuyển đổi JSON sang chuỗi có định dạng
         const jsonString = JSON.stringify(obj, null, 2);
@@ -126,8 +131,7 @@ document.addEventListener('DOMContentLoaded', function() {
         // Thay thế các ký tự cho keys và values
         const formatted = escaped
             // Keys - đóng khung với nền màu nhạt
-            .replace(/"([^"]+)":/g, '"<span class="json-key">$1</span>":')
-            // String values - màu xanh lá
+            .replace(/"([^"]+)":/g, '"<span class="json-key">$1</span>":')            // String values - màu xanh lá
             .replace(/: "([^"]*)"(,?)/g, ': "<span class="json-string">$1</span>"$2')
             // Number values - màu xanh dương
             .replace(/: (\d+)(,?)/g, ': <span class="json-number">$1</span>$2')
@@ -136,7 +140,14 @@ document.addEventListener('DOMContentLoaded', function() {
             // Null values - màu xám
             .replace(/: (null)(,?)/g, ': <span class="json-null">$1</span>$2');
         
-        return formatted;
+        // Nếu là theme mặc định, không áp dụng class theme
+        if (currentTheme === 'default') {
+            return formatted;
+        } else {
+            // Nếu không phải theme mặc định, bọc trong div có class theme tương ứng
+            const themeClass = `json-theme-${currentTheme}`;
+            return `<div class="${themeClass}">${formatted}</div>`;
+        }
     }
     
     // Switch to input mode
@@ -325,9 +336,103 @@ document.addEventListener('DOMContentLoaded', function() {
     rawBtn.classList.add('active');
     parsedBtn.classList.remove('active');
     
+    // Hiển thị theme mặc định trên nút
+    themeBtn.innerHTML = `Theme: Default <span class="material-icons">arrow_drop_down</span>`;
+    
 
     
     // Thêm phím tắt để xóa nội dung và các chức năng khác
+    
+    // Hàm áp dụng theme cho toàn bộ giao diện
+    function applyTheme(theme) {
+        // Xóa tất cả các data-theme cũ
+        document.documentElement.removeAttribute('data-theme');
+        
+        // Thêm data-theme mới nếu không phải default
+        if (theme !== 'default') {
+            document.documentElement.setAttribute('data-theme', theme);
+        }
+        
+        // Cập nhật nội dung nút Theme
+        themeBtn.innerHTML = `Theme: ${theme.charAt(0).toUpperCase() + theme.slice(1)} <span class="material-icons">arrow_drop_down</span>`;
+    }
+    
+    // Hàm load theme đã lưu từ trước
+    function loadSavedTheme() {
+        chrome.storage.local.get('currentTheme', function(data) {
+            if (data.currentTheme) {
+                // Cập nhật biến currentTheme
+                currentTheme = data.currentTheme;
+                
+                // Cập nhật UI - đánh dấu theme đang được chọn
+                themeOptions.forEach(opt => {
+                    opt.classList.remove('active');
+                    if (opt.getAttribute('data-theme') === currentTheme) {
+                        opt.classList.add('active');
+                    }
+                });
+                
+                // Áp dụng theme cho toàn bộ giao diện
+                applyTheme(currentTheme);
+                
+                // Nếu đang ở chế độ Parsed, cập nhật lại hiển thị JSON với theme mới
+                if (!isRawMode && jsonInput.value.trim()) {
+                    formatJSON();
+                }
+            }
+        });
+    }
+    
+    // Xử lý hiển thị/ẩn dropdown theme khi click
+    themeBtn.addEventListener('click', function(e) {
+        e.preventDefault();
+        e.stopPropagation();
+        document.getElementById('theme-dropdown-content').classList.toggle('show');
+    });
+    
+    // Đóng dropdown khi click ra ngoài
+    document.addEventListener('click', function(event) {
+        const dropdown = document.getElementById('theme-dropdown-content');
+        if (!dropdown.contains(event.target) && event.target !== themeBtn) {
+            dropdown.classList.remove('show');
+        }
+    });
+    
+    // Xử lý khi người dùng chọn theme từ dropdown
+    themeOptions.forEach(option => {
+        option.addEventListener('click', function(e) {
+            e.preventDefault();
+            e.stopPropagation();
+            
+            // Lấy theme được chọn từ data attribute
+            const selectedTheme = this.getAttribute('data-theme');
+            
+            // Cập nhật theme hiện tại
+            currentTheme = selectedTheme;
+            
+            // Cập nhật UI - đánh dấu theme đang được chọn
+            themeOptions.forEach(opt => {
+                opt.classList.remove('active');
+                if (opt.getAttribute('data-theme') === selectedTheme) {
+                    opt.classList.add('active');
+                }
+            });
+            
+            // Áp dụng theme cho toàn bộ giao diện
+            applyTheme(selectedTheme);
+            
+            // Lưu theme hiện tại vào storage
+            chrome.storage.local.set({ 'currentTheme': selectedTheme });
+            
+            // Đóng dropdown sau khi chọn theme
+            document.getElementById('theme-dropdown-content').classList.remove('show');
+            
+            // Nếu đang ở chế độ Parsed, cập nhật lại hiển thị JSON với theme mới
+            if (!isRawMode && jsonInput.value.trim()) {
+                formatJSON();
+            }
+        });
+    });
     
     // Xử lý nút lịch sử
     historyBtn.addEventListener('click', function(event) {

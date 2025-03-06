@@ -1,0 +1,54 @@
+/* Dark theme */
+
+:root[data-theme="dark"] {
+    --primary-color: #2196f3;
+    --primary-light: #90caf9;
+    --primary-dark: #0d47a1;
+    --secondary-color: #2c2c2c;
+    --text-primary: #e0e0e0;
+    --text-secondary: #b0bec5;
+    --bg-color: #121212;
+    --border-color: #424242;
+    --success-color: #4caf50;
+    --error-color: #f44336;
+    --accent-color: #03a9f4;
+    --json-bg-color: #1e1e1e;
+    --popup-bg-color: #212121;
+    --popup-border-color: #424242;
+    --toolbar-bg-color: #212121;
+    --input-bg-color: #1e1e1e;
+    --button-hover-color: #0d47a1;
+}
+
+/* Định dạng JSON với dark theme */
+.json-theme-dark .json-key {
+    color: #64b5f6;
+    font-weight: bold;
+    background-color: rgba(100, 181, 246, 0.1);
+}
+
+.json-theme-dark .json-string {
+    color: #81c784;
+}
+
+.json-theme-dark .json-number {
+    color: #ffb74d;
+}
+
+.json-theme-dark .json-boolean {
+    color: #ba68c8;
+    font-weight: bold;
+}
+
+.json-theme-dark .json-null {
+    color: #ef5350;
+    font-weight: bold;
+}
+
+.json-theme-dark .json-bracket {
+    color: #b0bec5;
+}
+
+.json-theme-dark .json-comma {
+    color: #b0bec5;
+}

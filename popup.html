@@ -5,6 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>JSON Formatter Pro</title>
     <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="themes/dark.css">
+    <link rel="stylesheet" href="themes/monokai.css">
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
 </head>
@@ -15,23 +17,19 @@
             <button id="history-btn" class="history-button" title="Lịch sử JSON">
                 <span class="material-icons">history</span>
             </button>
-            <div id="history-popup" class="history-popup">
-                <div class="history-header">
-                    <h3>Lịch sử gần đây</h3>
-                    <button id="close-history" class="close-history">
-                        <span class="material-icons">close</span>
-                    </button>
-                </div>
-                <ul id="history-list" class="history-list">
-                    <!-- Lịch sử JSON sẽ được thêm vào đây bằng JavaScript -->
-                </ul>
-            </div>
         </div>
         
         <div class="content">
             <div class="toolbar">
                 <div class="tab-group">
-                    <button class="tab-button active" id="theme-btn">Theme</button>
+                    <div class="theme-dropdown">
+                        <button id="theme-btn">Theme <span class="material-icons">arrow_drop_down</span></button>
+                        <div class="theme-dropdown-content" id="theme-dropdown-content">
+                            <a href="#" class="theme-option" data-theme="default">Default</a>
+                            <a href="#" class="theme-option" data-theme="dark">Dark</a>
+                            <a href="#" class="theme-option" data-theme="monokai">Monokai</a>
+                        </div>
+                    </div>
                 </div>
                 <div class="format-buttons">
                     <button class="format-button active" id="raw-btn">Raw</button>
@@ -50,5 +48,20 @@
         </div>
     </div>
     <script src="popup.js"></script>
+    
+    <!-- Lịch sử JSON popup được di chuyển tới đây để đảm bảo hiển thị ở tầng cao nhất -->
+    <div id="history-popup" class="history-popup">
+        <div>
+            <div class="history-header">
+                <h3>Lịch sử gần đây</h3>
+                <button id="close-history" class="close-history">
+                    <span class="material-icons">close</span>
+                </button>
+            </div>
+            <ul id="history-list" class="history-list">
+                <!-- Lịch sử JSON sẽ được thêm vào đây bằng JavaScript -->
+            </ul>
+        </div>
+    </div>
 </body>
 </html>
