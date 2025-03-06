@@ -251,6 +251,8 @@ body {
     overflow-x: hidden; 
     overflow-y: auto; /* Cho phép thanh cuộn dọc */
     transition: background-color 0.3s ease, color 0.3s ease;
+    scrollbar-width: thin; /* Cho Firefox */
+    scrollbar-color: rgba(180, 180, 180, 0.3) transparent; /* Cho Firefox */
 }
 
 #json-display {
@@ -271,6 +273,8 @@ body {
     overflow-y: auto; /* Cho phép thanh cuộn dọc */
     transition: background-color 0.3s ease, color 0.3s ease;
     white-space: pre; /* Giữ nguyên khoảng trắng và dòng mới */
+    scrollbar-width: thin; /* Cho Firefox */
+    scrollbar-color: rgba(180, 180, 180, 0.3) transparent; /* Cho Firefox */
 }
 
 #json-input:focus {
@@ -344,6 +348,26 @@ body {
 .error-icon {
     margin-right: 10px;
     font-size: 18px;
+}
+
+/* Tùy chỉnh thanh cuộn cho Chrome và các trình duyệt khác */
+::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+}
+
+::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+    background-color: rgba(180, 180, 180, 0.3);
+    border-radius: 4px;
+    border: 2px solid transparent;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background-color: rgba(180, 180, 180, 0.5);
 }
 
 .actions {

@@ -4,7 +4,7 @@
 - [x] Thiết kế giao diện popup với màu chủ đạo xanh da trời
 - [x] Tạo các file cấu trúc cơ bản cho extension (manifest.json, popup.html, styles.css, popup.js)
 - [x] Thiết kế icon cho extension
-- [x] Tạo README.md với hướng dẫn cài đặt và sử dụng
+- [x] Tạo README.md chuyên nghiệp bằng tiếng Anh với hướng dẫn cài đặt và sử dụng
 
 ## Cần làm
 - [ ] Phát triển logic xử lý JSON hoàn chỉnh

@@ -2,7 +2,7 @@
 chrome.runtime.onInstalled.addListener(() => {
   chrome.contextMenus.create({
     id: "view-as-json",
-    title: "Xem như JSON",
+    title: "View As JSON",
     contexts: ["selection"]
   });
 });
