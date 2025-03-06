@@ -5,11 +5,21 @@ document.addEventListener('DOMContentLoaded', function() {
     const rawBtn = document.getElementById('raw-btn');
     const parsedBtn = document.getElementById('parsed-btn');
     const themeBtn = document.getElementById('theme-btn');
+    const historyBtn = document.getElementById('history-btn');
+    const historyPopup = document.getElementById('history-popup');
+    const closeHistory = document.getElementById('close-history');
+    const historyList = document.getElementById('history-list');
     const editorContainer = document.querySelector('.editor-container');
     const content = document.querySelector('.content');
     
     // Variable to keep track of the current mode
     let isRawMode = true; // Mặc định ở chế độ Raw khi mới mở extension
+    
+    // Load lịch sử JSON đã nhập
+    loadJsonHistory();
+    
+    // Kiểm tra xem có mở popup từ context menu không
+    checkForContextMenuText();
 
     // Format JSON
     function formatJSON() {
@@ -22,6 +32,9 @@ document.addEventListener('DOMContentLoaded', function() {
             
             // Parse the JSON to ensure it's valid
             const jsonObj = JSON.parse(jsonText);
+            
+            // Lưu vào lịch sử nếu JSON hợp lệ
+            saveToHistory(jsonText);
             
             // Hiệu ứng khi format thành công
             editorContainer.classList.add('format-success');
@@ -166,6 +179,144 @@ document.addEventListener('DOMContentLoaded', function() {
         // Không làm gì khi đang ở chế độ Parsed
     });
     
+    // Hàm để thêm vào lịch sử khi có nội dung hợp lệ
+    function saveToHistory(text) {
+        // Nếu có nội dung hợp lệ, thêm vào lịch sử
+        if (text && text.trim()) {
+            addToJsonHistory(text);
+        }
+    }
+    
+    // Hàm thêm JSON vào lịch sử
+    function addToJsonHistory(jsonText) {
+        chrome.storage.local.get('jsonHistory', function(data) {
+            let history = data.jsonHistory || [];
+            
+            // Kiểm tra xem jsonText đã có trong lịch sử chưa
+            const existingIndex = history.findIndex(item => item === jsonText);
+            
+            // Nếu đã có, xóa mục cũ để không bị trùng lặp
+            if (existingIndex !== -1) {
+                history.splice(existingIndex, 1);
+            }
+            
+            // Thêm vào đầu mảng
+            history.unshift(jsonText);
+            
+            // Giữ tối đa 5 mục trong lịch sử
+            if (history.length > 5) {
+                history = history.slice(0, 5);
+            }
+            
+            // Lưu lịch sử mới
+            chrome.storage.local.set({ 'jsonHistory': history }, function() {
+                console.log('Lịch sử JSON đã được cập nhật');
+                // Cập nhật giao diện lịch sử nếu đang mở
+                if (historyPopup.classList.contains('show')) {
+                    updateHistoryUI();
+                }
+            });
+        });
+    }
+    
+    // Hàm tải lịch sử JSON
+    function loadJsonHistory() {
+        chrome.storage.local.get('jsonHistory', function(data) {
+            if (data.jsonHistory && data.jsonHistory.length > 0) {
+                updateHistoryUI();
+            }
+        });
+    }
+    
+    // Hàm cập nhật giao diện lịch sử
+    function updateHistoryUI() {
+        chrome.storage.local.get('jsonHistory', function(data) {
+            const history = data.jsonHistory || [];
+            
+            // Xóa tất cả mục hiện tại trong danh sách
+            historyList.innerHTML = '';
+            
+            if (history.length === 0) {
+                // Hiển thị thông báo nếu không có lịch sử
+                const emptyMessage = document.createElement('li');
+                emptyMessage.classList.add('empty-history');
+                emptyMessage.textContent = 'Chưa có lịch sử nào';
+                historyList.appendChild(emptyMessage);
+            } else {
+                // Tạo các mục lịch sử
+                history.forEach((jsonText, index) => {
+                    const item = document.createElement('li');
+                    item.classList.add('history-item');
+                    
+                    // Hàm tạo chuỗi JSON tối giản (bỏ khoảng trắng)
+                    let minifiedJson = '';
+                    try {
+                        // Parse và chuyển đổi thành JSON tối giản
+                        minifiedJson = JSON.stringify(JSON.parse(jsonText));
+                    } catch (e) {
+                        // Nếu có lỗi, dùng chuỗi gốc
+                        minifiedJson = jsonText.replace(/\s+/g, ' ');
+                    }
+                    
+                    // Giới hạn độ dài hiển thị
+                    let displayText = minifiedJson.substring(0, 40);
+                    if (minifiedJson.length > 40) {
+                        displayText += '...';
+                    }
+                    
+                    item.textContent = displayText;
+                    
+                    // Thêm sự kiện click để chọn mục lịch sử
+                    item.addEventListener('click', function() {
+                        jsonInput.value = jsonText;
+                        saveToHistory(jsonText); // Đảm bảo mục này lên đầu lịch sử
+                        historyPopup.classList.remove('show'); // Đóng popup
+                        showInput(); // Chuyển về chế độ nhập
+                        rawBtn.classList.add('active');
+                        parsedBtn.classList.remove('active');
+                        isRawMode = true;
+                    });
+                    
+                    historyList.appendChild(item);
+                });
+            }
+        });
+    }
+    
+    // Hàm kiểm tra và hiển thị văn bản được chọn từ context menu
+    function checkForContextMenuText() {
+        chrome.storage.local.get(['contextMenuSelection', 'openFromContextMenu'], function(data) {
+            if (data.openFromContextMenu && data.contextMenuSelection) {
+                let jsonText = data.contextMenuSelection;
+                
+                // Lưu vào lịch sử nếu là JSON hợp lệ
+                try {
+                    // Kiểm tra xem đã là JSON hợp lệ chưa
+                    const parsedJson = JSON.parse(jsonText);
+                    
+                    // Định dạng lại JSON với indent để làm đẹp và gán vào input
+                    jsonInput.value = JSON.stringify(parsedJson, null, 4);
+                    
+                    // Nếu đến được đây thì là JSON hợp lệ, lưu vào lịch sử
+                    saveToHistory(jsonInput.value);
+                    
+                    // Chuyển sang chế độ parsed
+                    isRawMode = false;
+                    parsedBtn.classList.add('active');
+                    rawBtn.classList.remove('active');
+                    formatJSON();
+                } catch (e) {
+                    // Nếu không phải JSON hợp lệ, chỉ hiển thị text thô
+                    jsonInput.value = jsonText;
+                    console.log('Văn bản được chọn không phải là JSON hợp lệ:', e.message);
+                }
+                
+                // Đặt lại cờ đã đọc để tránh hiển thị lại nếu reload popup
+                chrome.storage.local.set({ 'openFromContextMenu': false });
+            }
+        });
+    }
+    
     // Initialize the UI
     showInput();
     jsonInput.setAttribute('placeholder', 'Dán hoặc nhập JSON vào đây...');
@@ -174,7 +325,39 @@ document.addEventListener('DOMContentLoaded', function() {
     rawBtn.classList.add('active');
     parsedBtn.classList.remove('active');
     
+
+    
     // Thêm phím tắt để xóa nội dung và các chức năng khác
+    
+    // Xử lý nút lịch sử
+    historyBtn.addEventListener('click', function(event) {
+        event.stopPropagation(); // Ngăn sự kiện click lan tỏa đến document
+        historyPopup.classList.toggle('show');
+        
+        // Cập nhật UI lịch sử nếu đang hiển thị
+        if (historyPopup.classList.contains('show')) {
+            updateHistoryUI();
+        }
+    });
+    
+    // Đóng lịch sử khi bấm nút đóng
+    closeHistory.addEventListener('click', function(event) {
+        event.stopPropagation();
+        historyPopup.classList.remove('show');
+    });
+    
+    // Đóng lịch sử khi click ra ngoài
+    document.addEventListener('click', function(event) {
+        // Kiểm tra nếu click ngoài popup và ngoài nút history
+        if (!historyPopup.contains(event.target) && event.target !== historyBtn) {
+            historyPopup.classList.remove('show');
+        }
+    });
+    
+    // Ngăn sự kiện click trong popup lan tỏa ra ngoài
+    historyPopup.addEventListener('click', function(event) {
+        event.stopPropagation();
+    });
     jsonInput.addEventListener('keydown', function(event) {
         // Ctrl+X hoặc Command+X để xóa nội dung
         if ((event.ctrlKey || event.metaKey) && event.key === 'x' && !event.shiftKey) {
@@ -187,8 +370,11 @@ document.addEventListener('DOMContentLoaded', function() {
             event.preventDefault();
         }
         
-        // Ctrl+Enter hoặc Command+Enter để format JSON
+        // Format khi nhấn Ctrl+Enter hoặc Command+Enter
         if ((event.ctrlKey || event.metaKey) && event.key === 'Enter') {
+            isRawMode = false;
+            parsedBtn.classList.add('active');
+            rawBtn.classList.remove('active');
             formatJSON();
             event.preventDefault();
         }
