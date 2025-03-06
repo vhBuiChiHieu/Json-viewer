@@ -203,9 +203,9 @@ document.addEventListener('DOMContentLoaded', function() {
             // Thêm vào đầu mảng
             history.unshift(jsonText);
             
-            // Giữ tối đa 5 mục trong lịch sử
-            if (history.length > 5) {
-                history = history.slice(0, 5);
+            // Giữ tối đa 10 mục trong lịch sử
+            if (history.length > 10) {
+                history = history.slice(0, 10);
             }
             
             // Lưu lịch sử mới
