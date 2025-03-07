@@ -1,7 +1,7 @@
 {
   "manifest_version": 3,
   "name": "JSON Formatter Pro",
-  "description": "Công cụ chuyên nghiệp giúp hiển thị và định dạng dữ liệu JSON",
+  "description": "Professional tool for displaying and formatting JSON data",
   "version": "1.0",
   "action": {
     "default_popup": "popup.html",

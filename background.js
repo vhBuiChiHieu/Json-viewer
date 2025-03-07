@@ -1,22 +1,60 @@
-// Tạo menu chuột phải khi extension được cài đặt
+// Create context menu when extension is installed
 chrome.runtime.onInstalled.addListener(() => {
   chrome.contextMenus.create({
     id: "view-as-json",
     title: "View As JSON",
     contexts: ["selection"]
   });
+  
+  // Add new option to open in tab
+  chrome.contextMenus.create({
+    id: "view-as-json-tab",
+    title: "View As JSON (Tab)",
+    contexts: ["selection"]
+  });
 });
 
-// Xử lý khi người dùng bấm vào tùy chọn "Xem như JSON"
+// Handle when user clicks on "View As JSON" option
 chrome.contextMenus.onClicked.addListener((info, tab) => {
   if (info.menuItemId === "view-as-json" && info.selectionText) {
-    // Lưu văn bản được chọn vào storage
+    // Save selected text to storage
     chrome.storage.local.set({ 
       'contextMenuSelection': info.selectionText,
       'openFromContextMenu': true
     }, () => {
-      // Mở popup
+      // Open popup
       chrome.action.openPopup();
     });
+  }
+  
+  // Handle when user clicks on "View As JSON (Tab)" option
+  if (info.menuItemId === "view-as-json-tab" && info.selectionText) {
+    try {
+      // Try to parse JSON to check validity and reformat
+      const jsonObj = JSON.parse(info.selectionText);
+      // Format JSON with 2 spaces
+      const formattedJson = JSON.stringify(jsonObj, null, 2);
+      
+      // Save formatted text to storage
+      chrome.storage.local.set({ 
+        'tabContextMenuSelection': formattedJson,
+        'openTabFromContextMenu': true
+      }, () => {
+        // Create URL for editor.html
+        const editorUrl = chrome.runtime.getURL('editor.html') + '?source=contextMenu';
+        
+        // Open new tab with editor URL
+        chrome.tabs.create({ url: editorUrl });
+      });
+    } catch (e) {
+      // If not valid JSON, still save original text
+      chrome.storage.local.set({ 
+        'tabContextMenuSelection': info.selectionText,
+        'openTabFromContextMenu': true
+      }, () => {
+        const editorUrl = chrome.runtime.getURL('editor.html') + '?source=contextMenu';
+        chrome.tabs.create({ url: editorUrl });
+      });
+    }
   }
 });

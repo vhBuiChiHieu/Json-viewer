@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="vi">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -16,12 +16,13 @@
 <body>
     <div class="container">
         <div class="header">
+            <div class="header-spacer"></div>
             <h1 class="title">JSON VIEWER</h1>
             <div class="header-buttons">
-                <button id="expand-btn" class="expand-button" title="Mở trong tab mới">
+                <button id="expand-btn" class="expand-button" title="Open in new tab">
                     <span class="material-icons">open_in_new</span>
                 </button>
-                <button id="history-btn" class="history-button" title="Lịch sử JSON">
+                <button id="history-btn" class="history-button" title="JSON History">
                     <span class="material-icons">history</span>
                 </button>
             </div>
@@ -42,7 +43,7 @@
                         </div>
                     </div>
                     <div class="scroll-toggle-wrapper">
-                        <button id="scroll-toggle-btn" class="scroll-toggle-btn active" title="Bật/tắt thanh cuộn ngang">Cuộn <span class="material-icons">toggle_on</span></button>
+                        <button id="scroll-toggle-btn" class="scroll-toggle-btn active" title="Toggle horizontal scrolling">Scroll <span class="material-icons">toggle_on</span></button>
                     </div>
                 </div>
                 <div class="format-buttons">
@@ -52,8 +53,10 @@
             </div>
             
             <div class="editor-container">
-                <textarea id="json-input" placeholder="Dán hoặc nhập JSON vào đây..."></textarea>
-                <div id="json-display" class="json-display"></div>
+                <div class="editor-content">
+                    <textarea id="json-input" spellcheck="false" placeholder="Paste or type your JSON here..."></textarea>
+                </div>
+                <div id="json-display" class="json-display" spellcheck="false"></div>
             </div>
         </div>
         
@@ -73,17 +76,17 @@
     </div>
     <script src="popup.js"></script>
     
-    <!-- Lịch sử JSON popup được di chuyển tới đây để đảm bảo hiển thị ở tầng cao nhất -->
+    <!-- JSON history popup moved here to ensure it displays at the highest layer -->
     <div id="history-popup" class="history-popup">
         <div>
             <div class="history-header">
-                <h3>Lịch sử gần đây</h3>
+                <h3>Recent History</h3>
                 <button id="close-history" class="close-history">
                     <span class="material-icons">close</span>
                 </button>
             </div>
             <ul id="history-list" class="history-list">
-                <!-- Lịch sử JSON sẽ được thêm vào đây bằng JavaScript -->
+                <!-- JSON history will be added here by JavaScript -->
             </ul>
         </div>
     </div>

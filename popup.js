@@ -16,20 +16,20 @@ document.addEventListener('DOMContentLoaded', function() {
     const themeOptions = document.querySelectorAll('.theme-option');
     
     // Variables to keep track of the current mode and theme
-    let isRawMode = true; // Mặc định ở chế độ Raw khi mới mở extension
-    let currentTheme = 'default'; // Mặc định theme là Default
-    let scrollEnabled = true; // Mặc định cho phép cuộn ngang
+    let isRawMode = true; // Default to Raw mode when extension is first opened
+    let currentTheme = 'default'; // Default theme
+    let scrollEnabled = true; // Default to allow horizontal scrolling
     
-    // Load lịch sử JSON đã nhập
+    // Load JSON history
     loadJsonHistory();
     
-    // Load theme đã lưu
+    // Load saved theme
     loadSavedTheme();
     
-    // Load trạng thái cuộn đã lưu
+    // Load saved scroll state
     loadScrollState();
     
-    // Kiểm tra xem có mở popup từ context menu không
+    // Check if popup was opened from context menu
     checkForContextMenuText();
 
     // Format JSON
@@ -68,7 +68,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 editorContainer.classList.remove('format-error');
             }, 500);
             
-            showDisplay(`<div class="error-message"><span class="error-icon">⚠️</span> Lỗi: ${error.message}</div>`, true);
+            showDisplay(`<div class="error-message"><span class="error-icon">⚠️</span> Error: ${error.message}</div>`, true);
         }
     }
     
@@ -118,7 +118,7 @@ document.addEventListener('DOMContentLoaded', function() {
             }, 50);
         } catch (e) {
             // Nếu có lỗi, vẫn hiển thị nhưng trong dạng thông báo lỗi
-            jsonDisplay.innerHTML = `<div class="error-message"><span class="error-icon">⚠️</span> Lỗi: ${e.message}</div>`;
+            jsonDisplay.innerHTML = `<div class="error-message"><span class="error-icon">⚠️</span> Error: ${e.message}</div>`;
             jsonDisplay.style.opacity = '1';
         }
     }
@@ -186,11 +186,9 @@ document.addEventListener('DOMContentLoaded', function() {
         }, 50);
     }
     
-    // Hàm mở URL khi click vào liên kết
+    // Hàm mở URL trong tab mới
     function openUrl(url) {
-        // Hiển thị hộp thoại xác nhận
-        if (confirm(`Bạn có muốn mở liên kết này không?\n${url}`)) {
-            // Mở URL trong tab mới
+        if (confirm(`Do you want to open this link?\n${url}`)) {
             window.open(url, '_blank');
         }
     }
@@ -400,16 +398,14 @@ document.addEventListener('DOMContentLoaded', function() {
 function toggleScrollState(enabled) {
     if (enabled) {
         // Bật cuộn ngang
-        jsonInput.classList.remove('no-horizontal-scroll');
         jsonDisplay.classList.remove('no-horizontal-scroll');
-        scrollToggleBtn.innerHTML = 'Cuộn <span class="material-icons">toggle_on</span>';
         scrollToggleBtn.classList.add('active');
+        scrollToggleBtn.innerHTML = 'Scroll <span class="material-icons">toggle_on</span>';
     } else {
         // Tắt cuộn ngang
-        jsonInput.classList.add('no-horizontal-scroll');
         jsonDisplay.classList.add('no-horizontal-scroll');
-        scrollToggleBtn.innerHTML = 'Cuộn <span class="material-icons">toggle_off</span>';
         scrollToggleBtn.classList.remove('active');
+        scrollToggleBtn.innerHTML = 'Scroll <span class="material-icons">toggle_off</span>';
     }
 }
     

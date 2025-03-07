@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="vi">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -17,9 +17,10 @@
 <body class="editor-page">
     <div class="container fullscreen-container">
         <div class="header">
+            <div class="header-spacer"></div>
             <h1 class="title">JSON EDITOR</h1>
             <div class="header-buttons">
-                <button id="history-btn" class="history-button" title="Lịch sử JSON">
+                <button id="history-btn" class="history-button" title="JSON History">
                     <span class="material-icons">history</span>
                 </button>
             </div>
@@ -40,7 +41,10 @@
                         </div>
                     </div>
                     <div class="scroll-toggle-wrapper">
-                        <button id="scroll-toggle-btn" class="scroll-toggle-btn active" title="Bật/tắt thanh cuộn ngang">Cuộn <span class="material-icons">toggle_on</span></button>
+                        <button id="scroll-toggle-btn" class="scroll-toggle-btn active" title="Toggle horizontal scrolling">Scroll <span class="material-icons">toggle_on</span></button>
+                    </div>
+                    <div class="simple-toggle-wrapper">
+                        <button id="simple-toggle-btn" class="simple-toggle-btn" title="Toggle simplified JSON view">Simple <span class="material-icons">toggle_off</span></button>
                     </div>
                 </div>
             </div>
@@ -51,7 +55,7 @@
                         <h3>Raw JSON</h3>
                     </div>
                     <div class="editor-content">
-                        <textarea id="json-input" placeholder="Dán hoặc nhập JSON vào đây..."></textarea>
+                        <textarea id="json-input" spellcheck="false" placeholder="Paste or type your JSON here..."></textarea>
                     </div>
                 </div>
                 <div class="editor-right">
@@ -59,7 +63,7 @@
                         <h3>Parsed JSON</h3>
                     </div>
                     <div class="editor-content">
-                        <div id="json-display" class="json-display"></div>
+                        <div id="json-display" class="json-display" spellcheck="false"></div>
                     </div>
                 </div>
             </div>
@@ -80,17 +84,17 @@
         </div>
     </div>
     
-    <!-- Lịch sử JSON popup được di chuyển tới đây để đảm bảo hiển thị ở tầng cao nhất -->
+    <!-- JSON history popup moved here to ensure it displays at the highest layer -->
     <div id="history-popup" class="history-popup">
         <div>
             <div class="history-header">
-                <h3>Lịch sử gần đây</h3>
+                <h3>Recent History</h3>
                 <button id="close-history" class="close-history">
                     <span class="material-icons">close</span>
                 </button>
             </div>
             <ul id="history-list" class="history-list">
-                <!-- Lịch sử JSON sẽ được thêm vào đây bằng JavaScript -->
+                <!-- JSON history will be added here by JavaScript -->
             </ul>
         </div>
     </div>

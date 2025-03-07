@@ -4,6 +4,7 @@ document.addEventListener('DOMContentLoaded', function() {
     const jsonDisplay = document.getElementById('json-display');
     const themeBtn = document.getElementById('theme-btn');
     const scrollToggleBtn = document.getElementById('scroll-toggle-btn');
+    const simpleToggleBtn = document.getElementById('simple-toggle-btn');
     const historyBtn = document.getElementById('history-btn');
     const historyPopup = document.getElementById('history-popup');
     const closeHistory = document.getElementById('close-history');
@@ -13,6 +14,7 @@ document.addEventListener('DOMContentLoaded', function() {
     // Variables to keep track of the current mode and theme
     let currentTheme = 'default'; // Mặc định theme là Default
     let scrollEnabled = true; // Mặc định cho phép cuộn ngang
+    let simpleMode = false; // Mặc định không sử dụng chế độ đơn giản
     
     // Load lịch sử JSON đã nhập
     loadJsonHistory();
@@ -22,6 +24,9 @@ document.addEventListener('DOMContentLoaded', function() {
     
     // Load trạng thái cuộn đã lưu
     loadScrollState();
+    
+    // Load trạng thái chế độ đơn giản đã lưu
+    loadSimpleState();
     
     // Tự động hiển thị định dạng parsed khi người dùng nhập JSON
     jsonInput.addEventListener('input', function() {
@@ -49,7 +54,7 @@ document.addEventListener('DOMContentLoaded', function() {
             
         } catch (e) {
             // Nếu có lỗi, vẫn hiển thị nhưng trong dạng thông báo lỗi
-            jsonDisplay.innerHTML = `<div class="error-message"><span class="error-icon">⚠️</span> Lỗi: ${e.message}</div>`;
+            jsonDisplay.innerHTML = `<div class="error-message"><span class="error-icon">⚠️</span> Error: ${e.message}</div>`;
         }
     }
     
@@ -92,13 +97,51 @@ document.addEventListener('DOMContentLoaded', function() {
         // Null values - màu xám
         formatted = formatted.replace(/: (null)(,?)/g, ': <span class="json-null">$1</span>$2');
         
+        // Thêm màu cho dấu phân cách
+        formatted = formatted
+            .replace(/\{/g, '<span class="json-punctuation">{</span>')
+            .replace(/\}/g, '<span class="json-punctuation">}</span>')
+            .replace(/\[/g, '<span class="json-punctuation">[</span>')
+            .replace(/\]/g, '<span class="json-punctuation">]</span>')
+            .replace(/,/g, '<span class="json-punctuation">,</span>');
+        
+        // Nếu đang ở chế độ đơn giản, xử lý thêm
+        if (simpleMode) {
+            // Xóa tất cả các dấu phân cách trong JSON
+            formatted = formatted
+                .replace(/<span class="json-punctuation">\{<\/span>/g, '')
+                .replace(/<span class="json-punctuation">\}<\/span>/g, '')
+                .replace(/<span class="json-punctuation">\[<\/span>/g, '')
+                .replace(/<span class="json-punctuation">\]<\/span>/g, '')
+                .replace(/<span class="json-punctuation">,<\/span>/g, '');
+            
+            // Xóa tất cả các dấu ngoặc kép (")
+            formatted = formatted
+                .replace(/"<span class="json-key">([^<]+)<\/span>":/g, '<span class="json-key">$1</span>:')
+                .replace(/: "<span class="json-string">([^<]+)<\/span>"/g, ': <span class="json-string">$1</span>')
+                .replace(/: "<span class="json-string"><a[^>]+>([^<]+)<\/a><\/span>"/g, ': <span class="json-string"><a href="#" class="json-link" data-url="$1">$1</a></span>')
+                .replace(/"/g, ''); // Xóa bất kỳ dấu ngoặc kép nào còn sót lại
+            
+            // Tách thành các dòng
+            const lines = formatted.split('\n');
+            
+            // Lọc bỏ các dòng trống hoặc chỉ chứa khoảng trắng
+            const filteredLines = lines.filter(line => {
+                const trimmedLine = line.trim();
+                return trimmedLine !== '' && !/^\s*$/.test(trimmedLine);
+            });
+            
+            // Ghép lại thành chuỗi
+            formatted = filteredLines.join('\n');
+        }
+        
         // Nếu là theme mặc định, không áp dụng class theme
         if (currentTheme === 'default') {
-            return formatted;
+            return `<pre>${formatted}</pre>`;
         } else {
             // Nếu không phải theme mặc định, bọc trong div có class theme tương ứng
             const themeClass = `json-theme-${currentTheme}`;
-            return `<div class="${themeClass}">${formatted}</div>`;
+            return `<pre class="${themeClass}">${formatted}</pre>`;
         }
     }
     
@@ -106,48 +149,76 @@ document.addEventListener('DOMContentLoaded', function() {
         jsonDisplay.innerHTML = content;
     }
     
-    // Toggles scroll state
+    // Xử lý sự kiện nút bật/tắt cuộn ngang
+    scrollToggleBtn.addEventListener('click', function() {
+        toggleScrollState(!scrollEnabled);
+    });
+    
+    // Xử lý sự kiện nút bật/tắt chế độ đơn giản
+    simpleToggleBtn.addEventListener('click', function() {
+        toggleSimpleMode(!simpleMode);
+    });
+    
+    // Xử lý sự kiện nút lịch sử
+    historyBtn.addEventListener('click', function() {
+        historyPopup.classList.toggle('show');
+    });
+    
+    // Hàm bật/tắt trạng thái cuộn ngang
     function toggleScrollState(enabled) {
+        scrollEnabled = enabled;
+        
+        // Cập nhật trạng thái cuộn cho JSON display
         if (enabled) {
-            jsonInput.classList.remove('no-horizontal-scroll');
             jsonDisplay.classList.remove('no-horizontal-scroll');
         } else {
-            jsonInput.classList.add('no-horizontal-scroll');
             jsonDisplay.classList.add('no-horizontal-scroll');
+        }
+        
+        // Cập nhật giao diện nút
+        updateScrollToggleButton();
+        
+        // Lưu trạng thái cuộn vào storage
+        chrome.storage.local.set({ 'scrollEnabled': enabled });
+    }
+    
+    // Hàm bật/tắt chế độ đơn giản
+    function toggleSimpleMode(enabled) {
+        simpleMode = enabled;
+        
+        // Cập nhật giao diện nút
+        updateSimpleToggleButton();
+        
+        // Lưu trạng thái chế độ đơn giản vào storage
+        chrome.storage.local.set({ 'simpleMode': enabled });
+        
+        // Cập nhật lại hiển thị JSON nếu có dữ liệu
+        if (jsonInput.value.trim()) {
+            processJsonInput();
         }
     }
     
-    // Load saved scroll state from storage
-    function loadScrollState() {
-        chrome.storage.local.get('scrollEnabled', function(data) {
-            scrollEnabled = data.scrollEnabled !== undefined ? data.scrollEnabled : true;
-            toggleScrollState(scrollEnabled);
-            updateScrollToggleButton();
-        });
-    }
-    
-    // Update scroll toggle button appearance
+    // Hàm cập nhật giao diện nút bật/tắt cuộn ngang
     function updateScrollToggleButton() {
         if (scrollEnabled) {
             scrollToggleBtn.classList.add('active');
-            scrollToggleBtn.innerHTML = 'Cuộn <span class="material-icons">toggle_on</span>';
+            scrollToggleBtn.querySelector('.material-icons').textContent = 'toggle_on';
         } else {
             scrollToggleBtn.classList.remove('active');
-            scrollToggleBtn.innerHTML = 'Cuộn <span class="material-icons">toggle_off</span>';
+            scrollToggleBtn.querySelector('.material-icons').textContent = 'toggle_off';
         }
     }
     
-    // Event Listener for scroll toggle button
-    scrollToggleBtn.addEventListener('click', function() {
-        scrollEnabled = !scrollEnabled;
-        
-        // Lưu trạng thái cuộn vào storage
-        chrome.storage.local.set({ 'scrollEnabled': scrollEnabled });
-        
-        // Cập nhật giao diện
-        toggleScrollState(scrollEnabled);
-        updateScrollToggleButton();
-    });
+    // Hàm cập nhật giao diện nút bật/tắt chế độ đơn giản
+    function updateSimpleToggleButton() {
+        if (simpleMode) {
+            simpleToggleBtn.classList.add('active');
+            simpleToggleBtn.querySelector('.material-icons').textContent = 'toggle_on';
+        } else {
+            simpleToggleBtn.classList.remove('active');
+            simpleToggleBtn.querySelector('.material-icons').textContent = 'toggle_off';
+        }
+    }
     
     // Load saved theme
     function loadSavedTheme() {
@@ -222,11 +293,6 @@ document.addEventListener('DOMContentLoaded', function() {
         if (!themeBtn.contains(e.target)) {
             document.getElementById('theme-dropdown-content').classList.remove('show');
         }
-    });
-    
-    // History button event
-    historyBtn.addEventListener('click', function() {
-        historyPopup.style.display = 'flex';
     });
     
     // Close history button event
@@ -340,14 +406,38 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
     
+    // Hàm load trạng thái cuộn đã lưu
+    function loadScrollState() {
+        chrome.storage.local.get('scrollEnabled', function(data) {
+            // Nếu có dữ liệu và khác với trạng thái mặc định
+            if (typeof data.scrollEnabled !== 'undefined' && data.scrollEnabled !== scrollEnabled) {
+                toggleScrollState(data.scrollEnabled);
+            } else {
+                // Cập nhật giao diện nút theo trạng thái mặc định
+                updateScrollToggleButton();
+            }
+        });
+    }
+    
+    // Hàm load trạng thái chế độ đơn giản đã lưu
+    function loadSimpleState() {
+        chrome.storage.local.get('simpleMode', function(data) {
+            // Nếu có dữ liệu và khác với trạng thái mặc định
+            if (typeof data.simpleMode !== 'undefined' && data.simpleMode !== simpleMode) {
+                toggleSimpleMode(data.simpleMode);
+            } else {
+                // Cập nhật giao diện nút theo trạng thái mặc định
+                updateSimpleToggleButton();
+            }
+        });
+    }
+    
     // Hiệu ứng khi load trang
     document.body.classList.add('loaded');
     
-    // Hàm mở URL khi click vào liên kết
+    // Function to open URL in new tab
     function openUrl(url) {
-        // Hiển thị hộp thoại xác nhận
-        if (confirm(`Bạn có muốn mở liên kết này không?\n${url}`)) {
-            // Mở URL trong tab mới
+        if (confirm(`Do you want to open this link?\n${url}`)) {
             window.open(url, '_blank');
         }
     }
@@ -365,6 +455,7 @@ document.addEventListener('DOMContentLoaded', function() {
     // Kiểm tra nếu có URL params
     const urlParams = new URLSearchParams(window.location.search);
     const jsonParam = urlParams.get('json');
+    const sourceParam = urlParams.get('source');
     
     if (jsonParam) {
         try {
@@ -375,5 +466,24 @@ document.addEventListener('DOMContentLoaded', function() {
         } catch (e) {
             console.error('Error loading JSON from URL param:', e);
         }
+    }
+    
+    // Kiểm tra nếu được mở từ context menu (tab)
+    if (sourceParam === 'contextMenu') {
+        chrome.storage.local.get(['tabContextMenuSelection', 'openTabFromContextMenu'], function(result) {
+            if (result.openTabFromContextMenu && result.tabContextMenuSelection) {
+                // Sử dụng setTimeout để đảm bảo DOM đã được tải hoàn toàn
+                setTimeout(() => {
+                    // Đặt giá trị vào input, JSON đã được định dạng trong background.js
+                    jsonInput.value = result.tabContextMenuSelection;
+                    
+                    // Xử lý JSON input để hiển thị trong phần Parsed
+                    processJsonInput();
+                    
+                    // Xóa dữ liệu từ storage sau khi đã sử dụng
+                    chrome.storage.local.remove(['tabContextMenuSelection', 'openTabFromContextMenu']);
+                }, 100);
+            }
+        });
     }
 });
