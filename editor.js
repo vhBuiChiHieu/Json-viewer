@@ -33,7 +33,7 @@ document.addEventListener('DOMContentLoaded', function() {
         try {
             const jsonText = jsonInput.value.trim();
             if (!jsonText) {
-                showDisplay('<div class="empty-message">Vui lòng nhập dữ liệu JSON</div>');
+                showDisplay(''); // Không hiển thị gì khi không có dữ liệu
                 return;
             }
             
@@ -267,13 +267,16 @@ document.addEventListener('DOMContentLoaded', function() {
             const dateString = `${date.toLocaleDateString()} ${date.toLocaleTimeString()}`;
             
             // Cắt ngắn JSON cho hiển thị
-            let jsonPreview = item.json;
-            if (jsonPreview.length > 50) {
+            let jsonPreview = item.json || "";
+            if (jsonPreview && jsonPreview.length > 50) {
                 jsonPreview = jsonPreview.substring(0, 50) + '...';
             }
             
+            // Đảm bảo item.json là chuỗi trước khi encode
+            const safeJsonValue = item.json || "";
+            
             historyHTML += `
-                <li class="history-item" data-json="${encodeURIComponent(item.json)}">
+                <li class="history-item" data-json="${encodeURIComponent(safeJsonValue)}">
                     <div>
                         <div class="history-preview">${jsonPreview}</div>
                         <div class="history-date">${dateString}</div>

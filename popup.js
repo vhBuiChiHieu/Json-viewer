@@ -37,7 +37,7 @@ document.addEventListener('DOMContentLoaded', function() {
         try {
             const jsonText = jsonInput.value.trim();
             if (!jsonText) {
-                showDisplay('<div class="empty-message">Vui lòng nhập dữ liệu JSON</div>');
+                showDisplay(''); // Không hiển thị gì khi không có dữ liệu
                 return;
             }
             
@@ -304,9 +304,13 @@ document.addEventListener('DOMContentLoaded', function() {
                 historyList.appendChild(emptyMessage);
             } else {
                 // Tạo các mục lịch sử
-                history.forEach((jsonText, index) => {
+                history.forEach((historyItem, index) => {
                     const item = document.createElement('li');
                     item.classList.add('history-item');
+                    
+                    // Lấy chuỗi JSON từ đối tượng lịch sử
+                    // Kiểm tra nếu historyItem là đối tượng có thuộc tính json, hoặc là chuỗi
+                    const jsonText = (typeof historyItem === 'object' && historyItem.json) ? historyItem.json : historyItem;
                     
                     // Hàm tạo chuỗi JSON tối giản (bỏ khoảng trắng)
                     let minifiedJson = '';
@@ -314,8 +318,8 @@ document.addEventListener('DOMContentLoaded', function() {
                         // Parse và chuyển đổi thành JSON tối giản
                         minifiedJson = JSON.stringify(JSON.parse(jsonText));
                     } catch (e) {
-                        // Nếu có lỗi, dùng chuỗi gốc
-                        minifiedJson = jsonText.replace(/\s+/g, ' ');
+                        // Nếu có lỗi, dùng chuỗi gốc (đảm bảo là chuỗi)
+                        minifiedJson = String(jsonText).replace(/\s+/g, ' ');
                     }
                     
                     // Giới hạn độ dài hiển thị
