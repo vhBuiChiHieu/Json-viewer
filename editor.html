@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>JSON Formatter Pro</title>
+    <title>JSON Editor</title>
     <link rel="stylesheet" href="styles.css">
     <link rel="stylesheet" href="themes/dark.css">
     <link rel="stylesheet" href="themes/monokai.css">
@@ -12,22 +12,20 @@
     <link rel="stylesheet" href="themes/dracula.css">
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <link rel="stylesheet" href="editor.css">
 </head>
-<body>
-    <div class="container">
+<body class="editor-page">
+    <div class="container fullscreen-container">
         <div class="header">
-            <h1 class="title">JSON VIEWER</h1>
+            <h1 class="title">JSON EDITOR</h1>
             <div class="header-buttons">
-                <button id="expand-btn" class="expand-button" title="Mở trong tab mới">
-                    <span class="material-icons">open_in_new</span>
-                </button>
                 <button id="history-btn" class="history-button" title="Lịch sử JSON">
                     <span class="material-icons">history</span>
                 </button>
             </div>
         </div>
         
-        <div class="content">
+        <div class="content fullscreen-content">
             <div class="toolbar">
                 <div class="tab-group">
                     <div class="theme-dropdown">
@@ -45,15 +43,25 @@
                         <button id="scroll-toggle-btn" class="scroll-toggle-btn active" title="Bật/tắt thanh cuộn ngang">Cuộn <span class="material-icons">toggle_on</span></button>
                     </div>
                 </div>
-                <div class="format-buttons">
-                    <button class="format-button active" id="raw-btn">Raw</button>
-                    <button class="format-button" id="parsed-btn">Parsed</button>
-                </div>
             </div>
             
-            <div class="editor-container">
-                <textarea id="json-input" placeholder="Dán hoặc nhập JSON vào đây..."></textarea>
-                <div id="json-display" class="json-display"></div>
+            <div class="split-editor-container">
+                <div class="editor-left">
+                    <div class="editor-header">
+                        <h3>Raw JSON</h3>
+                    </div>
+                    <div class="editor-content">
+                        <textarea id="json-input" placeholder="Dán hoặc nhập JSON vào đây..."></textarea>
+                    </div>
+                </div>
+                <div class="editor-right">
+                    <div class="editor-header">
+                        <h3>Parsed JSON</h3>
+                    </div>
+                    <div class="editor-content">
+                        <div id="json-display" class="json-display"></div>
+                    </div>
+                </div>
             </div>
         </div>
         
@@ -71,7 +79,6 @@
             </div>
         </div>
     </div>
-    <script src="popup.js"></script>
     
     <!-- Lịch sử JSON popup được di chuyển tới đây để đảm bảo hiển thị ở tầng cao nhất -->
     <div id="history-popup" class="history-popup">
@@ -87,5 +94,7 @@
             </ul>
         </div>
     </div>
+    
+    <script src="editor.js"></script>
 </body>
 </html>

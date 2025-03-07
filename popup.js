@@ -7,6 +7,7 @@ document.addEventListener('DOMContentLoaded', function() {
     const themeBtn = document.getElementById('theme-btn');
     const scrollToggleBtn = document.getElementById('scroll-toggle-btn');
     const historyBtn = document.getElementById('history-btn');
+    const expandBtn = document.getElementById('expand-btn');
     const historyPopup = document.getElementById('history-popup');
     const closeHistory = document.getElementById('close-history');
     const historyList = document.getElementById('history-list');
@@ -152,8 +153,8 @@ document.addEventListener('DOMContentLoaded', function() {
             return `: "<span class="json-string">${processedString}</span>"${p2}`;
         });
             
-        // Number values - màu xanh dương
-        formatted = formatted.replace(/: (\d+)(,?)/g, ': <span class="json-number">$1</span>$2');
+        // Number values - màu xanh dương (bao gồm cả số âm và số thập phân)
+        formatted = formatted.replace(/: (-?\d+\.?\d*)(,?)/g, ': <span class="json-number">$1</span>$2');
             
         // Boolean values - màu cam
         formatted = formatted.replace(/: (true|false)(,?)/g, ': <span class="json-boolean">$1</span>$2');
@@ -580,5 +581,22 @@ function toggleScrollState(enabled) {
     
     jsonInput.addEventListener('blur', function() {
         editorContainer.classList.remove('focused');
+    });
+    
+    // Xử lý sự kiện nút mở tab mới
+    expandBtn.addEventListener('click', function() {
+        // Lấy JSON hiện tại (nếu có)
+        const currentJson = jsonInput.value.trim();
+        
+        // Tạo URL cho editor.html
+        let editorUrl = chrome.runtime.getURL('editor.html');
+        
+        // Nếu có JSON hiện tại, truyền vào URL params
+        if (currentJson) {
+            editorUrl += `?json=${encodeURIComponent(currentJson)}`;
+        }
+        
+        // Mở tab mới với URL editor
+        chrome.tabs.create({ url: editorUrl });
     });
 });
