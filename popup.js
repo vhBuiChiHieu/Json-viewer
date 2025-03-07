@@ -5,6 +5,7 @@ document.addEventListener('DOMContentLoaded', function() {
     const rawBtn = document.getElementById('raw-btn');
     const parsedBtn = document.getElementById('parsed-btn');
     const themeBtn = document.getElementById('theme-btn');
+    const scrollToggleBtn = document.getElementById('scroll-toggle-btn');
     const historyBtn = document.getElementById('history-btn');
     const historyPopup = document.getElementById('history-popup');
     const closeHistory = document.getElementById('close-history');
@@ -16,12 +17,16 @@ document.addEventListener('DOMContentLoaded', function() {
     // Variables to keep track of the current mode and theme
     let isRawMode = true; // Mặc định ở chế độ Raw khi mới mở extension
     let currentTheme = 'default'; // Mặc định theme là Default
+    let scrollEnabled = true; // Mặc định cho phép cuộn ngang
     
     // Load lịch sử JSON đã nhập
     loadJsonHistory();
     
     // Load theme đã lưu
     loadSavedTheme();
+    
+    // Load trạng thái cuộn đã lưu
+    loadScrollState();
     
     // Kiểm tra xem có mở popup từ context menu không
     checkForContextMenuText();
@@ -128,17 +133,33 @@ document.addEventListener('DOMContentLoaded', function() {
             .replace(/</g, '&lt;')
             .replace(/>/g, '&gt;');
         
+        // Function tạo liên kết cho URL
+        const linkifyUrl = (text) => {
+            // Regex để phát hiện URL
+            const urlRegex = /(https?:\/\/[^\s"]+)/g;
+            return text.replace(urlRegex, url => `<a href="#" class="json-link" data-url="${url}">${url}</a>`);
+        };
+        
         // Thay thế các ký tự cho keys và values
-        const formatted = escaped
+        let formatted = escaped
             // Keys - đóng khung với nền màu nhạt
-            .replace(/"([^"]+)":/g, '"<span class="json-key">$1</span>":')            // String values - màu xanh lá
-            .replace(/: "([^"]*)"(,?)/g, ': "<span class="json-string">$1</span>"$2')
-            // Number values - màu xanh dương
-            .replace(/: (\d+)(,?)/g, ': <span class="json-number">$1</span>$2')
-            // Boolean values - màu cam
-            .replace(/: (true|false)(,?)/g, ': <span class="json-boolean">$1</span>$2')
-            // Null values - màu xám
-            .replace(/: (null)(,?)/g, ': <span class="json-null">$1</span>$2');
+            .replace(/"([^"]+)":/g, '"<span class="json-key">$1</span>":');
+            
+        // String values - màu xanh lá và phát hiện URL
+        formatted = formatted.replace(/: "([^"]*)"(,?)/g, (match, p1, p2) => {
+            // Kiểm tra xem chuỗi có chứa URL hay không
+            const processedString = linkifyUrl(p1);
+            return `: "<span class="json-string">${processedString}</span>"${p2}`;
+        });
+            
+        // Number values - màu xanh dương
+        formatted = formatted.replace(/: (\d+)(,?)/g, ': <span class="json-number">$1</span>$2');
+            
+        // Boolean values - màu cam
+        formatted = formatted.replace(/: (true|false)(,?)/g, ': <span class="json-boolean">$1</span>$2');
+            
+        // Null values - màu xám
+        formatted = formatted.replace(/: (null)(,?)/g, ': <span class="json-null">$1</span>$2');
         
         // Nếu là theme mặc định, không áp dụng class theme
         if (currentTheme === 'default') {
@@ -164,7 +185,34 @@ document.addEventListener('DOMContentLoaded', function() {
         }, 50);
     }
     
+    // Hàm mở URL khi click vào liên kết
+    function openUrl(url) {
+        // Hiển thị hộp thoại xác nhận
+        if (confirm(`Bạn có muốn mở liên kết này không?\n${url}`)) {
+            // Mở URL trong tab mới
+            window.open(url, '_blank');
+        }
+    }
+    
     // Event Listeners
+    // Bắt sự kiện click vào liên kết trong phần Parsed JSON
+    jsonDisplay.addEventListener('click', function(e) {
+        // Kiểm tra xem đã click vào liên kết hay không
+        if (e.target && e.target.classList.contains('json-link')) {
+            e.preventDefault();
+            const url = e.target.getAttribute('data-url');
+            if (url) {
+                openUrl(url);
+            }
+            return;
+        }
+        
+        // Nếu không phải click vào liên kết và đang ở chế độ Raw, chuyển về chế độ nhập text
+        if (isRawMode) {
+            showInput();
+        }
+    });
+    
     // Chỉ định dạng JSON khi người dùng bấm nút Parsed hoặc dùng phím tắt Ctrl+Enter
     
     rawBtn.addEventListener('click', function() {
@@ -343,6 +391,23 @@ document.addEventListener('DOMContentLoaded', function() {
     
     // Thêm phím tắt để xóa nội dung và các chức năng khác
     
+// Hàm bật/tắt trạng thái cuộn ngang
+function toggleScrollState(enabled) {
+    if (enabled) {
+        // Bật cuộn ngang
+        jsonInput.classList.remove('no-horizontal-scroll');
+        jsonDisplay.classList.remove('no-horizontal-scroll');
+        scrollToggleBtn.innerHTML = 'Cuộn <span class="material-icons">toggle_on</span>';
+        scrollToggleBtn.classList.add('active');
+    } else {
+        // Tắt cuộn ngang
+        jsonInput.classList.add('no-horizontal-scroll');
+        jsonDisplay.classList.add('no-horizontal-scroll');
+        scrollToggleBtn.innerHTML = 'Cuộn <span class="material-icons">toggle_off</span>';
+        scrollToggleBtn.classList.remove('active');
+    }
+}
+    
     // Hàm áp dụng theme cho toàn bộ giao diện
     function applyTheme(theme) {
         // Xóa tất cả các data-theme cũ
@@ -355,6 +420,17 @@ document.addEventListener('DOMContentLoaded', function() {
         
         // Cập nhật nội dung nút Theme
         themeBtn.innerHTML = `Theme: ${theme.charAt(0).toUpperCase() + theme.slice(1)} <span class="material-icons">arrow_drop_down</span>`;
+    }
+    
+    // Hàm load trạng thái cuộn đã lưu
+    function loadScrollState() {
+        chrome.storage.local.get('scrollEnabled', function(data) {
+            // Mặc định trạng thái cuộn là bật (true) nếu chưa từng lưu
+            scrollEnabled = data.scrollEnabled !== undefined ? data.scrollEnabled : true;
+            
+            // Áp dụng trạng thái cuộn
+            toggleScrollState(scrollEnabled);
+        });
     }
     
     // Hàm load theme đã lưu từ trước
@@ -462,6 +538,18 @@ document.addEventListener('DOMContentLoaded', function() {
     // Ngăn sự kiện click trong popup lan tỏa ra ngoài
     historyPopup.addEventListener('click', function(event) {
         event.stopPropagation();
+    });
+    
+    // Xử lý sự kiện khi nhấn nút bật/tắt cuộn ngang
+    scrollToggleBtn.addEventListener('click', function() {
+        // Đảo ngược trạng thái cuộn
+        scrollEnabled = !scrollEnabled;
+        
+        // Cập nhật UI và áp dụng trạng thái cuộn
+        toggleScrollState(scrollEnabled);
+        
+        // Lưu trạng thái cuộn vào storage
+        chrome.storage.local.set({ 'scrollEnabled': scrollEnabled });
     });
     jsonInput.addEventListener('keydown', function(event) {
         // Ctrl+X hoặc Command+X để xóa nội dung

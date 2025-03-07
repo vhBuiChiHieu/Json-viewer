@@ -34,6 +34,11 @@ body {
     transition: background-color 0.3s ease, color 0.3s ease;
 }
 
+/* Class để tắt thanh cuộn ngang */
+.no-horizontal-scroll {
+    overflow-x: hidden !important;
+}
+
 .container {
     display: flex;
     flex-direction: column;
@@ -94,6 +99,7 @@ body {
     box-shadow: 0 2px 5px rgba(0, 0, 0, 0.08);
     padding: 3px;
     transition: background-color 0.3s ease;
+    align-items: center;
 }
 
 /* Theme dropdown styles */
@@ -102,6 +108,48 @@ body {
     display: inline-block;
     margin-right: 10px;
     z-index: 999;
+}
+
+/* Scroll toggle styles */
+.scroll-toggle-wrapper {
+    position: relative;
+    display: inline-block;
+    z-index: 998;
+}
+
+.scroll-toggle-btn {
+    background-color: var(--primary-color);
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    min-width: 110px;
+    padding: 10px 14px;
+    border-radius: 4px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+    font-weight: 500;
+    font-size: 14px;
+    transition: all 0.2s ease;
+    border: none;
+    cursor: pointer;
+    text-shadow: 0 1px 1px rgba(0, 0, 0, 0.2);
+}
+
+.scroll-toggle-btn:hover {
+    background-color: var(--primary-dark);
+}
+
+.scroll-toggle-btn .material-icons {
+    font-size: 18px;
+    margin-left: 5px;
+}
+
+.scroll-toggle-btn.active .material-icons {
+    color: #4caf50;
+}
+
+.scroll-toggle-btn:not(.active) .material-icons {
+    color: #f44336;
 }
 
 #theme-btn {
@@ -113,12 +161,13 @@ body {
     min-width: 140px;
     padding: 10px 14px;
     border-radius: 4px;
-    box-shadow: 0 2px 5px rgba(30, 136, 229, 0.3);
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
     font-weight: 500;
     font-size: 14px;
     transition: all 0.2s ease;
     border: none;
     cursor: pointer;
+    text-shadow: 0 1px 1px rgba(0, 0, 0, 0.2);
 }
 
 #theme-btn:hover {
@@ -137,12 +186,13 @@ body {
     left: 0;
     z-index: 9999;
     min-width: 140px;
-    background-color: #fff;
+    background-color: var(--popup-bg-color);
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
     border-radius: 4px;
     padding: 8px 0;
     margin-top: 0;
-    border: 1px solid #e0e0e0;
+    border: 1px solid var(--popup-border-color);
+    transition: background-color 0.3s ease, border-color 0.3s ease;
 }
 
 /* Hiển thị nội dung dropdown khi có class 'show' */
@@ -161,6 +211,82 @@ body {
     border-bottom: 1px solid var(--border-color);
 }
 
+/* CSS đặc biệt cho từng theme để đảm bảo text luôn hiển thị rõ trong dropdown */
+/* Light theme */
+:root[data-theme="light"] .theme-dropdown-content {
+    background-color: #ffffff;
+    border-color: #e0e0e0;
+}
+
+:root[data-theme="light"] .theme-option {
+    color: #333333;
+}
+
+:root[data-theme="light"] .theme-option:hover {
+    background-color: #42a5f5;
+    color: #ffffff;
+}
+
+/* Dark theme */
+:root[data-theme="dark"] .theme-dropdown-content {
+    background-color: #212121;
+    border-color: #424242;
+}
+
+:root[data-theme="dark"] .theme-option {
+    color: #e0e0e0;
+}
+
+:root[data-theme="dark"] .theme-option:hover {
+    background-color: #0d47a1;
+    color: #ffffff;
+}
+
+/* Nord theme */
+:root[data-theme="nord"] .theme-dropdown-content {
+    background-color: #2e3440;
+    border-color: #4c566a;
+}
+
+:root[data-theme="nord"] .theme-option {
+    color: #eceff4;
+}
+
+:root[data-theme="nord"] .theme-option:hover {
+    background-color: #5e81ac;
+    color: #eceff4;
+}
+
+/* Monokai theme */
+:root[data-theme="monokai"] .theme-dropdown-content {
+    background-color: #272822;
+    border-color: #49483e;
+}
+
+:root[data-theme="monokai"] .theme-option {
+    color: #f8f8f2;
+}
+
+:root[data-theme="monokai"] .theme-option:hover {
+    background-color: #a6e22e;
+    color: #272822;
+}
+
+/* Dracula theme */
+:root[data-theme="dracula"] .theme-dropdown-content {
+    background-color: #2d2f3c;
+    border-color: #6272a4;
+}
+
+:root[data-theme="dracula"] .theme-option {
+    color: #f8f8f2;
+}
+
+:root[data-theme="dracula"] .theme-option:hover {
+    background-color: #ff79c6;
+    color: #f8f8f2;
+}
+
 .theme-option:last-child {
     border-bottom: none;
 }
@@ -168,6 +294,7 @@ body {
 .theme-option:hover {
     background-color: var(--button-hover-color);
     color: white;
+    text-shadow: 0 1px 1px rgba(0, 0, 0, 0.2);
 }
 
 .theme-option.active {
@@ -248,9 +375,9 @@ body {
     font-family: 'Consolas', 'Monaco', monospace;
     font-size: 15px;
     line-height: 1.6;
-    overflow-x: hidden; 
+    overflow-x: auto; 
     overflow-y: auto; /* Cho phép thanh cuộn dọc */
-    transition: background-color 0.3s ease, color 0.3s ease;
+    transition: background-color 0.3s ease, color 0.3s ease, overflow-x 0.3s ease;
     scrollbar-width: thin; /* Cho Firefox */
     scrollbar-color: rgba(180, 180, 180, 0.3) transparent; /* Cho Firefox */
 }
@@ -271,7 +398,7 @@ body {
     line-height: 1.6;
     overflow-x: auto; /* Cho phép thanh cuộn ngang khi cần */
     overflow-y: auto; /* Cho phép thanh cuộn dọc */
-    transition: background-color 0.3s ease, color 0.3s ease;
+    transition: background-color 0.3s ease, color 0.3s ease, overflow-x 0.3s ease;
     white-space: pre; /* Giữ nguyên khoảng trắng và dòng mới */
     scrollbar-width: thin; /* Cho Firefox */
     scrollbar-color: rgba(180, 180, 180, 0.3) transparent; /* Cho Firefox */

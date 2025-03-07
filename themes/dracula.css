@@ -1,0 +1,54 @@
+/* Dracula theme */
+
+:root[data-theme="dracula"] {
+    --primary-color: #bd93f9;
+    --primary-light: #ff79c6;
+    --primary-dark: #6272a4;
+    --secondary-color: #44475a;
+    --text-primary: #f8f8f2;
+    --text-secondary: #f1fa8c;
+    --bg-color: #282a36;
+    --border-color: #6272a4;
+    --success-color: #50fa7b;
+    --error-color: #ff5555;
+    --accent-color: #8be9fd;
+    --json-bg-color: #282a36;
+    --popup-bg-color: #2d2f3c;
+    --popup-border-color: #6272a4;
+    --toolbar-bg-color: #2d2f3c;
+    --input-bg-color: #282a36;
+    --button-hover-color: #ff79c6;
+}
+
+/* Định dạng JSON với Dracula theme */
+.json-theme-dracula .json-key {
+    color: #ff79c6;
+    font-weight: bold;
+    background-color: rgba(255, 121, 198, 0.1);
+}
+
+.json-theme-dracula .json-string {
+    color: #f1fa8c;
+}
+
+.json-theme-dracula .json-number {
+    color: #bd93f9;
+}
+
+.json-theme-dracula .json-boolean {
+    color: #8be9fd;
+    font-weight: bold;
+}
+
+.json-theme-dracula .json-null {
+    color: #ff5555;
+    font-weight: bold;
+}
+
+.json-theme-dracula .json-bracket {
+    color: #f8f8f2;
+}
+
+.json-theme-dracula .json-comma {
+    color: #f8f8f2;
+}
