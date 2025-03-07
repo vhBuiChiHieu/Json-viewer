@@ -297,13 +297,13 @@ document.addEventListener('DOMContentLoaded', function() {
     
     // Close history button event
     closeHistory.addEventListener('click', function() {
-        historyPopup.style.display = 'none';
+        historyPopup.classList.remove('show');
     });
     
     // Close history popup when clicking outside
     historyPopup.addEventListener('click', function(e) {
         if (e.target === historyPopup) {
-            historyPopup.style.display = 'none';
+            historyPopup.classList.remove('show');
         }
     });
     
@@ -320,7 +320,7 @@ document.addEventListener('DOMContentLoaded', function() {
     // Display JSON history
     function displayJsonHistory(history) {
         if (history.length === 0) {
-            historyList.innerHTML = '<li class="empty-history">Chưa có lịch sử JSON nào</li>';
+            historyList.innerHTML = '<li class="empty-history">No JSON history yet</li>';
             return;
         }
         
@@ -343,10 +343,8 @@ document.addEventListener('DOMContentLoaded', function() {
             
             historyHTML += `
                 <li class="history-item" data-json="${encodeURIComponent(safeJsonValue)}">
-                    <div>
-                        <div class="history-preview">${jsonPreview}</div>
-                        <div class="history-date">${dateString}</div>
-                    </div>
+                    ${jsonPreview}
+                    <span class="history-item-time">${dateString}</span>
                 </li>
             `;
         }
@@ -359,7 +357,7 @@ document.addEventListener('DOMContentLoaded', function() {
             item.addEventListener('click', function() {
                 const jsonData = decodeURIComponent(this.getAttribute('data-json'));
                 jsonInput.value = jsonData;
-                historyPopup.style.display = 'none';
+                historyPopup.classList.remove('show');
                 
                 // Process the loaded JSON
                 processJsonInput();

@@ -1,0 +1,61 @@
+/* Focus Dark theme - Designed for better focus and readability */
+
+:root[data-theme="focus-dark"] {
+    --primary-color: #7986cb;      /* Indigo 300 - Soft indigo */
+    --primary-color-rgb: 121, 134, 203; /* RGB values for primary color */
+    --primary-light: #aab6fe;      /* Indigo 200 - Lighter indigo */
+    --primary-dark: #49599a;       /* Indigo 700 - Darker indigo */
+    --secondary-color: #1a1a1a;    /* Very dark gray */
+    --text-primary: #e0e0e0;       /* Light gray for main text */
+    --text-secondary: #b0bec5;     /* Blue-gray 200 for secondary text */
+    --bg-color: #121212;           /* Material dark background */
+    --border-color: #333333;       /* Dark gray for borders */
+    --success-color: #81c784;      /* Green 300 - Softer green */
+    --error-color: #e57373;        /* Red 300 - Softer red */
+    --accent-color: #7986cb;       /* Indigo 300 - Same as primary */
+    --json-bg-color: #1a1a1a;      /* Slightly lighter than bg-color */
+    --popup-bg-color: #1a1a1a;     /* Same as json-bg-color */
+    --popup-border-color: #333333; /* Same as border-color */
+    --toolbar-bg-color: #1a1a1a;   /* Same as json-bg-color */
+    --input-bg-color: #1a1a1a;     /* Same as json-bg-color */
+    --button-hover-color: #49599a; /* Same as primary-dark */
+}
+
+/* JSON formatting for Focus Dark theme */
+.json-theme-focus-dark .json-key {
+    color: #9fa8da;                /* Indigo 200 - Light indigo */
+    font-weight: bold;
+    background-color: rgba(159, 168, 218, 0.1); /* Light indigo with low opacity */
+}
+
+.json-theme-focus-dark .json-string {
+    color: #a5d6a7;                /* Green 200 - Light green */
+}
+
+.json-theme-focus-dark .json-number {
+    color: #ffcc80;                /* Orange 200 - Light orange */
+}
+
+.json-theme-focus-dark .json-boolean {
+    color: #ce93d8;                /* Purple 200 - Light purple */
+    font-weight: bold;
+}
+
+.json-theme-focus-dark .json-null {
+    color: #ef9a9a;                /* Red 200 - Light red */
+    font-weight: bold;
+}
+
+.json-theme-focus-dark .json-punctuation {
+    color: #b0bec5;                /* Blue-gray 200 - Light blue-gray */
+}
+
+/* Links in JSON */
+.json-theme-focus-dark .json-link {
+    color: #90caf9;                /* Blue 200 - Light blue */
+    text-decoration: underline;
+}
+
+.json-theme-focus-dark .json-link:hover {
+    color: #bbdefb;                /* Blue 100 - Very light blue */
+} 

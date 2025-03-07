@@ -298,7 +298,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 // Hiển thị thông báo nếu không có lịch sử
                 const emptyMessage = document.createElement('li');
                 emptyMessage.classList.add('empty-history');
-                emptyMessage.textContent = 'Chưa có lịch sử nào';
+                emptyMessage.textContent = 'No JSON history yet';
                 historyList.appendChild(emptyMessage);
             } else {
                 // Tạo các mục lịch sử
@@ -309,6 +309,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     // Lấy chuỗi JSON từ đối tượng lịch sử
                     // Kiểm tra nếu historyItem là đối tượng có thuộc tính json, hoặc là chuỗi
                     const jsonText = (typeof historyItem === 'object' && historyItem.json) ? historyItem.json : historyItem;
+                    const timestamp = (typeof historyItem === 'object' && historyItem.timestamp) ? historyItem.timestamp : Date.now();
                     
                     // Hàm tạo chuỗi JSON tối giản (bỏ khoảng trắng)
                     let minifiedJson = '';
@@ -326,7 +327,18 @@ document.addEventListener('DOMContentLoaded', function() {
                         displayText += '...';
                     }
                     
-                    item.textContent = displayText;
+                    // Format timestamp
+                    const date = new Date(timestamp);
+                    const dateString = `${date.toLocaleDateString()} ${date.toLocaleTimeString()}`;
+                    
+                    // Create content with timestamp
+                    const content = document.createTextNode(displayText);
+                    item.appendChild(content);
+                    
+                    const timeSpan = document.createElement('span');
+                    timeSpan.classList.add('history-item-time');
+                    timeSpan.textContent = dateString;
+                    item.appendChild(timeSpan);
                     
                     // Thêm sự kiện click để chọn mục lịch sử
                     item.addEventListener('click', function() {

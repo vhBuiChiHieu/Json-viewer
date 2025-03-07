@@ -2,14 +2,14 @@
 chrome.runtime.onInstalled.addListener(() => {
   chrome.contextMenus.create({
     id: "view-as-json",
-    title: "View As JSON",
+    title: "View with JSON Viewer",
     contexts: ["selection"]
   });
   
   // Add new option to open in tab
   chrome.contextMenus.create({
     id: "view-as-json-tab",
-    title: "View As JSON (Tab)",
+    title: "View with JSON Viewer (Tab)",
     contexts: ["selection"]
   });
 });

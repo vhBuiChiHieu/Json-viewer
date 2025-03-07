@@ -1,6 +1,6 @@
 {
   "manifest_version": 3,
-  "name": "JSON Formatter Pro",
+  "name": "JSON Viewer",
   "description": "Professional tool for displaying and formatting JSON data",
   "version": "1.0",
   "action": {
