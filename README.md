@@ -30,6 +30,16 @@ JSON Viewer is a sleek, intuitive Chrome extension designed to help developers, 
 <div align="center">
   <p><strong>Editor View with Syntax Highlighting</strong></p>
   <img src="screenshots/json-editor-screenshot.png" alt="JSON Editor Screenshot" width="800">
+  <br><br>
+  
+  <p><strong>JSON History Feature</strong></p>
+  <img src="screenshots/history.png" alt="JSON History Feature" width="600">
+  <p><em>Easily access your previously viewed JSON data with timestamps</em></p>
+  <br>
+  
+  <p><strong>Context Menu Integration</strong></p>
+  <img src="screenshots/menu.png" alt="Context Menu Integration" width="400">
+  <p><em>Right-click on any JSON text to view it in popup or tab mode</em></p>
 </div>
 
 ## 🛠️ Installation
@@ -55,21 +65,23 @@ JSON Viewer is a sleek, intuitive Chrome extension designed to help developers, 
 3. Toggle between Raw and Parsed views using the buttons in the toolbar
 4. Select a theme from the dropdown menu to change the appearance
 
-### Context Menu
+### Context Menu Integration
 1. Select JSON text on any webpage
 2. Right-click and select "View with JSON Viewer" from the context menu
 3. The extension popup will open with the selected text loaded
-4. Alternatively, select "View with JSON Viewer (Tab)" to open in a new tab
+4. Alternatively, select "View with JSON Viewer (Tab)" to open in a new tab with enhanced features
 
 ### JSON History
-1. Click the history icon in the header
-2. Select from your previously formatted JSON entries
-3. The selected JSON will be loaded into the editor
+1. Click the history icon in the header (clock icon)
+2. Browse through your previously formatted JSON entries with timestamps
+3. Click any entry to instantly load it into the editor
+4. History is automatically saved and persisted between sessions
 
-### Simple Mode
+### Simple Mode (Tab View Only)
 1. In the tab view, toggle the "Simple" button
 2. This removes brackets, quotes, and commas for a cleaner visualization
 3. Perfect for focusing on the data structure without syntax distractions
+4. Toggle back to normal view at any time
 
 ## 🧰 Project Structure
 
