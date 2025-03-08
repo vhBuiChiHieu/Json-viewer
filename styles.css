@@ -288,8 +288,7 @@ body {
 }
 
 :root[data-theme="light"] .theme-option:hover {
-    background-color: #42a5f5;
-    color: #ffffff;
+    background-color: rgba(0, 0, 0, 0.05);
 }
 
 /* Dark theme */
@@ -303,44 +302,13 @@ body {
 }
 
 :root[data-theme="dark"] .theme-option:hover {
-    background-color: #0d47a1;
-    color: #ffffff;
-}
-
-/* Nord theme */
-:root[data-theme="nord"] .theme-dropdown-content {
-    background-color: #2e3440;
-    border-color: #4c566a;
-}
-
-:root[data-theme="nord"] .theme-option {
-    color: #eceff4;
-}
-
-:root[data-theme="nord"] .theme-option:hover {
-    background-color: #5e81ac;
-    color: #eceff4;
-}
-
-/* Monokai theme */
-:root[data-theme="monokai"] .theme-dropdown-content {
-    background-color: #272822;
-    border-color: #49483e;
-}
-
-:root[data-theme="monokai"] .theme-option {
-    color: #f8f8f2;
-}
-
-:root[data-theme="monokai"] .theme-option:hover {
-    background-color: #a6e22e;
-    color: #272822;
+    background-color: rgba(255, 255, 255, 0.1);
 }
 
 /* Dracula theme */
 :root[data-theme="dracula"] .theme-dropdown-content {
-    background-color: #2d2f3c;
-    border-color: #6272a4;
+    background-color: #282a36;
+    border-color: #44475a;
 }
 
 :root[data-theme="dracula"] .theme-option {
@@ -348,8 +316,21 @@ body {
 }
 
 :root[data-theme="dracula"] .theme-option:hover {
-    background-color: #ff79c6;
-    color: #f8f8f2;
+    background-color: rgba(255, 255, 255, 0.1);
+}
+
+/* Focus Dark theme dropdown */
+:root[data-theme="focus-dark"] .theme-dropdown-content {
+    background-color: #1a1a1a;
+    border-color: #333333;
+}
+
+:root[data-theme="focus-dark"] .theme-option {
+    color: #e0e0e0;
+}
+
+:root[data-theme="focus-dark"] .theme-option:hover {
+    background-color: rgba(255, 255, 255, 0.1);
 }
 
 .theme-option:last-child {

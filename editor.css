@@ -89,9 +89,3 @@
     z-index: 1000;
 }
 
-/* Điều chỉnh kích thước popup lịch sử trên màn hình lớn */
-.editor-page .history-popup {
-    /* Không cần thiết lập width và left vì đã được xử lý trong styles.css */
-    /* width: 400px; */
-    /* left: calc(50% - 200px); */
-}

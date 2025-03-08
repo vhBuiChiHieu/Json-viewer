@@ -1,4 +1,4 @@
-# Danh sách công việc - JSON Formatter Pro
+# Danh sách công việc - JSON Viewer
 
 ## Đã hoàn thành
 - [x] Thiết kế giao diện popup với màu chủ đạo xanh da trời
@@ -11,7 +11,7 @@
 - [ ] Thêm chức năng lưu lịch sử định dạng JSON
 - [ ] Thêm tính năng xuất/nhập JSON từ file
 - [ ] Tối ưu hiệu suất khi xử lý JSON dung lượng lớn
-- [x] Thêm nhiều theme màu sắc khác ngoài màu mặc định (Dark, Light, Monokai, Nord, Dracula)
+- [x] Thêm nhiều theme màu sắc khác ngoài màu mặc định (Dark, Light, Dracula, Focus Dark)
 - [ ] Thêm chức năng tìm kiếm và lọc trong JSON
 - [ ] Kiểm thử trên các phiên bản Chrome khác nhau
 - [ ] Cải thiện accessibility cho người dùng khuyết tật
